@@ -1,0 +1,88 @@
+/*Query1  Which Genre have the most Invoices? */
+
+SELECT g.Name, COUNT(*) Purchases
+FROM Customer c
+JOIN Invoice i 
+ON c.CustomerId= i.CustomerId
+JOIN InvoiceLine il
+ON i.InvoiceId= il.InvoiceId 
+JOIN track t
+ON t.TrackId= il.TrackId
+JOIN Genre G 
+ON t.GenreId = g.GenreId
+GROUP BY g.Name
+ORDER BY  Purchases DESC
+
+
+
+
+
+
+/*Query2  What is the most popular music Genre for each country? */
+
+WITH t1 AS (
+SELECT g.Name,c.Country, COUNT(*) Purchases,g.GenreId
+FROM Customer c
+JOIN Invoice i 
+ON c.CustomerId= i.CustomerId
+JOIN InvoiceLine il
+ON i.InvoiceId= il.InvoiceId 
+JOIN track t
+ON t.TrackId= il.TrackId
+JOIN Genre G 
+ON t.GenreId = g.GenreId
+GROUP BY c.Country, g.Name
+ORDER BY Purchases DESC),
+
+t2 AS (
+SELECT MAX(Purchases) MaxPurchases, Country, Name, GenreId
+FROM t1
+GROUP BY Country)
+
+SELECT t1.*
+FROM t1
+JOIN t2
+ON t1.Country = t2.Country
+WHERE t1.Purchases = t2.MaxPurchases;
+
+
+
+
+
+
+/*Query3  Which artists have the most number of tracks in the Rock genre? */
+
+select A.name artist_name , count(*) Songs 
+from Artist A
+join Album B 
+on a.ArtistId = b.ArtistId 
+Join Track T
+on t.AlbumId = b.AlbumId 
+join Genre G
+on G.GenreId = t.GenreId
+WHERE g.Name = "Rock"
+GROUP by a.Name 
+ORDER By Songs DESC
+limit 10 
+
+
+
+
+
+
+
+
+/*Query4  Which Albums have the most tracks sold? */
+
+select A.Title album_name , count(*) Count_Of_tracks_sold
+from Album A
+Join Track T
+on a.AlbumId = t.AlbumId 
+join InvoiceLine IL
+on t.TrackId= il.TrackId
+GROUP by album_name 
+ORDER BY Count_Of_tracks_sold DESC
+limit 12
+
+
+
